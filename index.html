@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Benchmarking the potential of large models as multi-modal search engines">
+  <meta name="keywords" content="MMSearch">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> MMSearch: Benchmarking the potential of large models as multi-modal search engines</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
+  <!-- <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+/Users/panlu/Library/Mobile Documents/com~apple~CloudDocs/ImageMath/visual-mathqa-server/data_final/images
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link rel="icon" href="./static/images/icon.png">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/leaderboard.css">
+
+  <!-- <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_bulma.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script> -->
+  <script type="text/javascript" src="static/js/sort-table.js" defer></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/explorer-index.js"></script>
+  <script src="./static/js/question_card.js"></script>
+
+  <script src="./static/js/leaderboard_testmini.js"></script>  
+  <script src="./data/results/output_folders.js" defer></script>
+  <script src="./data/results/model_scores.js" defer></script>
+
+  <script src="./visualizer/data/data_public.js" defer></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <!-- <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a> -->
+      <!-- @PAN TODO: consider adding links? -->
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://mathverse-cuhk.github.io/">
+            <b>MathVerse</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+          <a class="navbar-item" href="https://mathvista.github.io/">
+            <b>MathVista</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+          <a class="navbar-item" href="https://github.com/OpenGVLab/LLaMA-Adapter">
+            <b>LLaMA-Adapter (V2)</b> <p style="font-size:18px; display: inline; margin-left: 5px;">🔥</p>
+          </a>
+          <a class="navbar-item" href="https://github.com/Alpha-VLLM/LLaMA2-Accessory/tree/main/SPHINX">
+            SPHINX-X
+          </a>
+          <a class="navbar-item" href="https://github.com/OpenGVLab/LLaMA-Adapter/tree/main/imagebind_LLM">
+            ImageBind-LLM
+          </a>
+          <a class="navbar-item" href="https://github.com/ZiyuGuo99/Point-Bind_Point-LLM">
+            Point-Bind & Point-LLM
+          </a>
+          <a class="navbar-item" href="https://github.com/ZrrSkywalker/Personalize-SAM">
+            PerSAM
+          </a>
+          <a class="navbar-item" href="https://caraj7.github.io/comat/">
+            CoMat
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title is-bold">
+            <img src="static/images/logo.png" style="width:1em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista" style="vertical-align: middle">MMSearch</span>
+            </h1>
+          <h2 class="subtitle is-3 publication-subtitle">
+            Benchmarking the potential of large models as multi-modal search engines
+            <!-- <br> -->
+            <!-- with GPT-4V, Bard, and Other Large Multimodal Models -->
+          </h2>
+        
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://caraj7.github.io">Dongzhi Jiang*</a><sup style="color:#6fbf73;">1</sup>,</span>
+            <span class="author-block">
+              <a href="https://zrrskywalker.github.io">Renrui Zhang</a><sup style="color:#6fbf73;">1</sup><sup style="color:#000000;">,</sup><sup style="color:#ed4b82;">2</sup>,</span>
+            <span class="author-block">
+              <a href="https://ziyuguo99.github.io">Ziyu Guo</a><sup style="color:#9400D3">3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://yanmin-wu.github.io/">Yanmin Wu</a><sup style="color:#ffac33">5</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://github.com/jylei16">Jiayi Lei</a><sup style="color:#4169E1">4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://prnszz.github.io/">Pengshuo Qiu</a><sup style="color:#4169E1">4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://lupantech.github.io">Pan Lu</a><sup style="color:#1E90FF">6</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://lovesnowbest.site/">Zehui Chen</a><sup style="color:#ed4b82">2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://songguanglu.github.io/">Guanglu Song</a><sup style="color:#FF69B4">7</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://gaopengcuhk.github.io">Peng Gao</a><sup style="color:#4169E1">4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://liuyu.us/">Yu Liu</a><sup style="color:#FF69B4">7</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://chunyuan.li/">Chunyuan Li</a><sup style="color:#ed4b82">2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.ee.cuhk.edu.hk/~hsli/">Hongsheng Li</a><sup style="color:#6fbf73">1</sup>
+            </span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup style="color:#6fbf73;">1</sup>CUHK MMLab,</span>
+            <span class="author-block"><sup style="color:#ed4b82">2</sup>ByteDance,</span>
+            <span class="author-block"><sup style="color:#9400D3">3</sup>CUHK MiuLar Lab,</span>
+            <span class="author-block"><sup style="color:#4169E1">4</sup>Shanghai AI Laboratory,</span><br>
+            <span class="author-block"><sup style="color:#ffac33">5</sup>Peking University,</span>
+            <span class="author-block"><sup style="color:#1E90FF">6</sup>Stanford University,</span>
+            <span class="author-block"><sup style="color:#FF69B4">7</sup>Sensetime Research</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <!-- @PAN TODO: change links -->
+                <a href="https://mmsearch.github.io"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://mmsearch.github.io"
+                   class="external-link button is-normal is-rounded is-dark">
+                <!-- <a href="https://lupantech.github.io/papers/arxiv23_mathvista.pdf"
+                   class="external-link button is-normal is-rounded is-dark"> -->
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/CaraJ7/MMSearch"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/datasets/CaraJ/MMSearch"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <!-- <i class="far fa-images"></i> -->
+                      <p style="font-size:18px">🤗</p>
+                      <!-- 🔗 -->
+                  </span>
+                  <span>Dataset</span>
+                </a>
+              </span> 
+              <!-- Visualization Link. -->
+              <span class="link-block">
+                <a href="https://mmsearch.github.io/#visualization"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <p style="font-size:18px">🔮</p>
+                  </span>
+                  <span>Visualize</span>
+                </a>
+              </span>
+              <!-- Leaderboard Link. -->
+              <span class="link-block">
+                <a href="https://mmsearch.github.io/#leaderboard"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <p style="font-size:18px">🏆</p>
+                  </span>
+                  <span>Leaderboard</span>
+                </a>
+              </span>
+              <!-- Twitter Link. -->
+              <!-- <span class="link-block">
+                <a href="https://twitter.com/lupantech/status/1717313355780964608"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"> -->
+                      <!-- <i class="far fa-images"></i> -->
+                      <!-- 💻🔗 -->
+                      <!-- <p style="font-size:18px">🌐</p> -->
+                  <!-- </span>
+                  <span>Twitter</span>
+                </a>
+              </span> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+          <p>
+            The advent of <b>Large Language Models (LLMs)</b> has paved the way for AI search engines, e.g., SearchGPT, showcasing a new paradigm in human-internet interaction. However, most current AI search engines are limited to text-only settings, neglecting the multimodal user queries and the text-image interleaved nature of website information.  Recently, Large Multimodal Models (LMMs) have made impressive strides. <b>Yet, whether they can function as AI search engines remains under-explored, leaving the potential of LMMs in multimodal search an open question.</b>
+          </p>
+          <p>
+            To this end, we first design a delicate pipeline, <span class="mathvista">MMSearch-Engine</span>, to empower any LMMs with multimodal search capabilities. On top of this, we introduce <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">MMSearch</span>, <b>a comprehensive evaluation benchmark to assess the multimodal search performance of LMMs.</b> The curated dataset contains 300 manually collected instances spanning 14 subfields, <b>which involves no overlap with the current LMMs' training data, ensuring the correct answer can only be obtained within searching.</b> By using <span class="mathvista">MMSearch-Engine</span>, the LMMs are evaluated by performing three individual tasks (requery, rerank, and summarization), and one challenging end-to-end task with a complete searching process.
+          </p>
+          <p>
+            We conduct extensive experiments on closed-source and open-source LMMs. Among all tested models, GPT-4o with  <span class="mathvista">MMSearch-Engine</span> achieves the best results, which surpasses the commercial product, Perplexity Pro, in the end-to-end task, demonstrating the effectiveness of our proposed pipeline. 
+            We further present error analysis to unveil <b>current LMMs still struggle to fully grasp the multimodal search tasks, and conduct ablation study to indicate the potential of scaling test-time computation for AI search engine.</b> We hope <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">MMSearch</span> may provide unique insights to guide the future development of multimodal AI search engine.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</div>
+</section>
+
+<section class="section">
+  <div class="container">
+    
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered content">
+
+        <h2 class="title is-3" id="leaderboard">Leaderboard</h2>
+        <div class="content">
+          <p class="mt-3">Final scores and scores of each task on the <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/><span class="mathvista">MMSearch</span>.
+          </p>
+              <table class="js-sort-table" id="results">
+                <thead>
+                  <tr>
+                    <th rowspan="2" style="vertical-align: middle;"><strong>#</strong></th>
+                    <th rowspan="2" style="vertical-align: middle;"><strong>Model</strong></th>
+                    <th rowspan="2" style="vertical-align: middle;"><strong>Date</strong></th>
+                    <th colspan="3" style="vertical-align: middle;"><strong><u>All</u></strong></th>
+                    <th colspan="3" style="vertical-align: middle;"><strong>End-to-end</strong></th>
+                    <th colspan="3" style="vertical-align: middle;"><strong>Requery</strong></th>
+                    <th colspan="3" style="vertical-align: middle;"><strong>Rerank</strong></th>
+                    <th colspan="3" style="vertical-align: middle;"><strong>Summarize</strong></th>
+                  </tr>
+                  <tr>
+                    <th><strong><u>Avg</u></strong></th>
+                    <th><strong>News</strong></th> 
+                    <th><strong>Know.</strong></th>
+                    <th><strong>Avg</strong></th>
+                    <th><strong>News</strong></th> 
+                    <th><strong>Know.</strong></th>
+                    <th><strong>Avg</strong></th>
+                    <th><strong>News</strong></th> 
+                    <th><strong>Know.</strong></th>
+                    <th><strong>Avg</strong></th>
+                    <th><strong>News</strong></th> 
+                    <th><strong>Know.</strong></th>
+                    <th><strong>Avg</strong></th>
+                    <th><strong>News</strong></th> 
+                    <th><strong>Know.</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <td>1</td>
+                  <td><b>GPT-4o</b></td>
+                  <td>2024-05</td>
+                  <td><b>62.3</b></td>
+                  <td>61.2</td>
+                  <td>65.3</td>
+                  <td>60.4</td>
+                  <td>59.0</td>
+                  <td>64.5</td>
+                  <td>46.8</td>
+                  <td>49.9</td>
+                  <td>38.0</td>
+                  <td>83.0</td>
+                  <td>82.4</td>
+                  <td>84.8</td>
+                  <td>63.1</td>
+                  <td>62.2</td>
+                  <td>65.6</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>GPT-4V</td>
+                  <td>2023-09</td>
+                  <td>55.0</td>
+                  <td>55.0</td>
+                  <td>55.3</td>
+                  <td>52.1</td>
+                  <td>52.2</td>
+                  <td>51.9</td>
+                  <td>45.7</td>
+                  <td>49.2</td>
+                  <td>35.8</td>
+                  <td>79.3</td>
+                  <td>76.9</td>
+                  <td>86.1</td>
+                  <td>57.4</td>
+                  <td>56.7</td>
+                  <td>59.4</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Claude 3.5 Sonnet</td>
+                  <td>2024-06</td>
+                  <td>53.5</td>
+                  <td>53.1</td>
+                  <td>54.7</td>
+                  <td>49.9</td>
+                  <td>49.3</td>
+                  <td>51.6</td>
+                  <td>42.0</td>
+                  <td>43.6</td>
+                  <td>37.7</td>
+                  <td>80.2</td>
+                  <td>78.7</td>
+                  <td>84.2</td>
+                  <td>59.4</td>
+                  <td>60.3</td>
+                  <td>57.0</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Qwen2-VL-AnyRes-72B</td>
+                  <td>2024-08</td>
+                  <td>52.7</td>
+                  <td>52.0</td>
+                  <td>54.5</td>
+                  <td>49.1</td>
+                  <td>48.8</td>
+                  <td>49.8</td>
+                  <td>44.7</td>
+                  <td>47.2</td>
+                  <td>37.6</td>
+                  <td>76.7</td>
+                  <td>72.9</td>
+                  <td>87.3</td>
+                  <td>59.6</td>
+                  <td>57.5</td>
+                  <td>65.7</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>LLaVA-OneVision-72B</td>
+                  <td>2024-08</td>
+                  <td>50.1</td>
+                  <td>50.1</td>
+                  <td>50.2</td>
+                  <td>44.9</td>
+                  <td>45.1</td>
+                  <td>44.1</td>
+                  <td>42.9</td>
+                  <td>45.9</td>
+                  <td>34.3</td>
+                  <td>82.2</td>
+                  <td>80.5</td>
+                  <td>86.7</td>
+                  <td>61.4</td>
+                  <td>59.1</td>
+                  <td>67.7</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>Qwen2-VL-AnyRes</td>
+                  <td>2024-08</td>
+                  <td>45.3</td>
+                  <td>44.1</td>
+                  <td>48.7</td>
+                  <td>40.3</td>
+                  <td>39.2</td>
+                  <td>43.5</td>
+                  <td>39.0</td>
+                  <td>41.9</td>
+                  <td>30.8</td>
+                  <td>76.7</td>
+                  <td>73.8</td>
+                  <td>84.8</td>
+                  <td>54.7</td>
+                  <td>52.7</td>
+                  <td>60.4</td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>LLaVA-OneVision</td>
+                  <td>2024-08</td>
+                  <td>36.6</td>
+                  <td>39.4</td>
+                  <td>28.9</td>
+                  <td>29.6</td>
+                  <td>33.1</td>
+                  <td>19.7</td>
+                  <td>35.8</td>
+                  <td>40.3</td>
+                  <td>23.2</td>
+                  <td>72.8</td>
+                  <td>73.5</td>
+                  <td>70.9</td>
+                  <td>53.5</td>
+                  <td>51.8</td>
+                  <td>58.5</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>Idefics3</td>
+                  <td>2024-08</td>
+                  <td>36.2</td>
+                  <td>38.5</td>
+                  <td>29.6</td>
+                  <td>29.3</td>
+                  <td>32.3</td>
+                  <td>20.8</td>
+                  <td>31.0</td>
+                  <td>37.3</td>
+                  <td>13.5</td>
+                  <td>76.5</td>
+                  <td>73.3</td>
+                  <td>85.4</td>
+                  <td>50.3</td>
+                  <td>51.1</td>
+                  <td>48.1</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>Idefics3-AnyRes</td>
+                  <td>2024-08</td>
+                  <td>35.7</td>
+                  <td>38.2</td>
+                  <td>28.7</td>
+                  <td>30.1</td>
+                  <td>32.9</td>
+                  <td>22.3</td>
+                  <td>27.2</td>
+                  <td>32.2</td>
+                  <td>13.2</td>
+                  <td>72.7</td>
+                  <td>73.1</td>
+                  <td>71.5</td>
+                  <td>45.2</td>
+                  <td>46.3</td>
+                  <td>42.1</td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>InternVL2</td>
+                  <td>2024-07</td>
+                  <td>34.3</td>
+                  <td>35.7</td>
+                  <td>30.2</td>
+                  <td>30.9</td>
+                  <td>32.5</td>
+                  <td>26.2</td>
+                  <td>32.3</td>
+                  <td>36.1</td>
+                  <td>21.6</td>
+                  <td>46.5</td>
+                  <td>49.3</td>
+                  <td>38.6</td>
+                  <td>48.5</td>
+                  <td>45.9</td>
+                  <td>55.8</td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>InternVL2-AnyRes</td>
+                  <td>2024-07</td>
+                  <td>34.1</td>
+                  <td>34.2</td>
+                  <td>33.7</td>
+                  <td>30.0</td>
+                  <td>30.3</td>
+                  <td>29.0</td>
+                  <td>31.4</td>
+                  <td>35.5</td>
+                  <td>19.7</td>
+                  <td>53.2</td>
+                  <td>52.3</td>
+                  <td>55.7</td>
+                  <td>46.9</td>
+                  <td>44.4</td>
+                  <td>53.7</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>mPlug-Owl3-AnyRes</td>
+                  <td>2024-08</td>
+                  <td>33.9</td>
+                  <td>35.5</td>
+                  <td>29.3</td>
+                  <td>27.3</td>
+                  <td>29.4</td>
+                  <td>21.2</td>
+                  <td>31.8</td>
+                  <td>36.1</td>
+                  <td>19.9</td>
+                  <td>74.5</td>
+                  <td>72.9</td>
+                  <td>79.1</td>
+                  <td>43.9</td>
+                  <td>43.6</td>
+                  <td>44.6</td>
+                </tr>
+                <tr>
+                  <td>13</td>
+                  <td>mPlug-Owl3</td>
+                  <td>2024-08</td>
+                  <td>32.1</td>
+                  <td>34.8</td>
+                  <td>24.4</td>
+                  <td>24.6</td>
+                  <td>28.1</td>
+                  <td>14.9</td>
+                  <td>32.6</td>
+                  <td>36.7</td>
+                  <td>21.2</td>
+                  <td>74.3</td>
+                  <td>73.5</td>
+                  <td>76.6</td>
+                  <td>45.6</td>
+                  <td>45.6</td>
+                  <td>45.4</td>
+                </tr>
+                <tr>
+                  <td>14</td>
+                  <td>LLaVA-NeXT-Interleave</td>
+                  <td>2024-06</td>
+                  <td>28.3</td>
+                  <td>29.2</td>
+                  <td>25.6</td>
+                  <td>23.0</td>
+                  <td>23.8</td>
+                  <td>20.5</td>
+                  <td>26.2</td>
+                  <td>30.7</td>
+                  <td>13.5</td>
+                  <td>55.3</td>
+                  <td>58.6</td>
+                  <td>46.2</td>
+                  <td>42.5</td>
+                  <td>40.0</td>
+                  <td>49.3</td>
+                </tr>
+                <tr>
+                  <td>15</td>
+                  <td>InternLM-XC2.5-AnyRes</td>
+                  <td>2024-07</td>
+                  <td>22.3</td>
+                  <td>23.9</td>
+                  <td>17.5</td>
+                  <td>23.2</td>
+                  <td>25.4</td>
+                  <td>16.9</td>
+                  <td>21.7</td>
+                  <td>19.8</td>
+                  <td>26.9</td>
+                  <td>0.0</td>
+                  <td>0.0</td>
+                  <td>0.0</td>
+                  <td>37.7</td>
+                  <td>38.6</td>
+                  <td>35.1</td>
+                </tr>
+                <tr>
+                  <td>16</td>
+                  <td>InternLM-XC2.5</td>
+                  <td>2024-07</td>
+                  <td>22.2</td>
+                  <td>22.8</td>
+                  <td>20.5</td>
+                  <td>22.9</td>
+                  <td>23.6</td>
+                  <td>20.8</td>
+                  <td>25.0</td>
+                  <td>24.3</td>
+                  <td>27.0</td>
+                  <td>0.0</td>
+                  <td>0.0</td>
+                  <td>0.0</td>
+                  <td>37.7</td>
+                  <td>38.6</td>
+                  <td>35.0</td>
+                </tr>
+            
+                  <tr>
+                    <td>17</td>
+                    <td>Mantis</td>
+                    <td>2024-05</td>
+                    <td>18.7</td>
+                    <td>19.8</td>
+                    <td>15.9</td>
+                    <td>15.8</td>
+                    <td>16.4</td>
+                    <td>14.3</td>
+                    <td>20.1</td>
+                    <td>24.6</td>
+                    <td>7.4</td>
+                    <td>39.7</td>
+                    <td>41.0</td>
+                    <td>36.1</td>
+                    <td>19.2</td>
+                    <td>22.0</td>
+                    <td>11.5</td>
+                  </tr>
+                  <tr>
+                    <td>-</td>
+                    <td>Human</td>
+                    <td>-</td>
+                    <td>69.2</td>
+                    <td>69.6</td>
+                    <td>68.1</td>
+                    <td>68.2</td>
+                    <td>68.6</td>
+                    <td>67.1</td>
+                    <td>43.7</td>
+                    <td>45.0</td>
+                    <td>40.1</td>
+                    <td>85.7</td>
+                    <td>87.3</td>
+                    <td>81.2</td>
+                    <td>72.8</td>
+                    <td>71.4</td>
+                    <td>76.7</td>
+                  </tr>
+                </tbody>
+              </table>
+
+          <i>All model sizes of open-source LMMs are 7B unless otherwise specified.</i><br>
+          <b>Human Performance*:</b> Average human performance from annotators that are college students.
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DATASET SECTION -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <!-- <h1 class="title is-1 mathvista"><img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>MathVista Dataset</h1> -->
+  <h1 class="title is-1 mathvista">
+    <img src="static/images/logo.png" style="width:1em;vertical-align: middle" alt="Logo"/>
+    <span class="mathvista" style="vertical-align: middle">MMSearch Dataset</span>
+  </h1>
+  </div>
+</section>
+
+<!-- <section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+          <p> -->
+            
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered has-text-centered">
+      <!-- <div class="column is-full-width has-text-centered"> -->
+        <div class="column is-four-fifths">
+        <h2 class="title is-3">Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">MMSearch</span> is a multimodal search benchmark crafted to evaluate the potential of LMMs to function as a multimodal AI search engine. 
+            This benchmark encompasses a meticulously collected dataset of <b>300 queries spanning 14 subfields</b>. To ensure the challenging nature of the benchmark. 
+            Our benchmark categorizes searching queries into two primary areas: <b>News</b> and <b>Knowledge</b>. <b>News area covers the latest news at the time of data collection (August, 2024).</b> This is to guarantee the answers to the queries will not be present in the training data of LMMs.
+            <b>For knowledge area, we collect queries requiring rare knowledge and then select the queries unable to be answered by current SoTA LMMs such as GPT-4o or Claude-3.5</b>.
+          </p>
+
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/overview_mv/image/teaser.png" alt="algebraic reasoning" width="80%"/>
+              <p> Overview of our benchmark
+                <span class="mathvista">MMSearch</span>.
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/overview_mv/image/pipeline2.png" alt="arithmetic reasoning" width="100%"/>
+              <p> Pipeline of 
+                <span class="mathvista">MMSearch-Engine</span>.
+            </div>
+          </div>
+        </div>
+      </div> 
+
+
+          <p>
+            <!-- All the data examples were divided into two subsets: testmini and test.  -->
+            <!-- @PAN TODO: add download links -->
+            <!-- <ul>
+              <li><b>testmini</b>: 1,000 examples used for model development, validation, or for those with limited computing resources.</li>
+              <li><b>test</b>: 5,141 examples for standard evaluation. Notably,
+                the answer labels for test will NOT be publicly released.</li>
+            </ul> -->
+            You can download the dataset on <a href="https://huggingface.co/datasets/AI4Math/MathVerse" target="_blank">Hugging Face Dataset</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column" style="margin-right: -20rem;">
+        <div class="content has-text-centered">
+          <img src="static/images/statistics_ms.png" alt="data-overview" style="max-width: 50%;"/>
+          <p> 
+            Key statistics of <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+            <span class="mathvista">MMSearch</span>.<br/>
+          </p> 
+        </div>
+      </div>
+      <div class="column">
+        <div class="content has-text-centered">
+          <img src="static/images/data-composition_ms.png" alt="data-composition" style="max-width: 53%;"/>
+          <p>
+              Category distribution of <img src="static/images/logo.png" style="width:1.0em;vertical-align: middle" alt="Logo"/>
+              <span class="mathvista">MMSearch</span>.<br/>
+              <!-- <br/> -->
+              <!-- <b>MWP</b>: math word problem,
+              <b>TQA</b>: textbook question answering,<br/>
+              <b>VQA</b>: visual question answering. -->
+          </p>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Evaluation strategy and Data Example</h2>
+
+        <div class="box m-5">
+          <div class="content has-text-centered">
+            <img src="static/images/evaluation_mv/evaluation_strategy.png" alt="" width="65%"/>
+            <p>Overview of evaluation strategy.</p>
+          </div>
+        </div>
+
+        <div class="box m-5">
+          <div class="content has-text-centered">
+            <img src="static/images/evaluation_mv/mainpaper_example.png" alt="" width="35%"/>
+            <p>Example input, LMM output, and ground truth for four evaluation tasks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS SECTION -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-1 mathvista">Experiment Results</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Error Analysis</h2>
+        <!-- <p>One example for each reasoning skill required in <span class="mathvista">MathVista</span></p> -->
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/result_analysis/error_analysis_e2e.png" alt="grade-lv" width="60%"/>
+              <p>Distribution of error types of GPT-4o and Qwen2-VL-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/result_analysis/error_analysis_reqsum.png" alt="grade-lv" width="80%"/>
+              <p>Distribution of error types of Qwen2-VL-7B in the requery and summarize task.</p>
+            </div>
+          </div>
+          <!-- <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results-figures/grade-lv.png" alt="grade-lv" width="90%"/>
+              <p>Average accuracy scores across different grade levels for leading foundation models</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results-figures/contexts.png" alt="contexts" width="90%"/>
+              <p>Accuracy scores of leading baselines across various visual contexts</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results-figures/ablation.png" alt="geometric reasoning" width="90%"/>
+              <p>Average accuracy scores of LLM baselines under various visual inputs</p>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Visualization Examples</h2>
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/result/architure_new-1.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/result/architure_new-2.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/result/architure_new-3.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/result/architure_new-4.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/result/architure_new-5.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0001.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0001.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0002.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0003.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0004.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/results_mv/image/sports_new/0005.png" alt="" width="80%"/>
+              <p>Response and middle results comparison of GPT-4o, Qwen2-VL-7B, and LLaVA-OneVision-7B in the end-to-end task.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- @PAN TODO: bibtex -->
+<!-- <section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">BibTeX</h2>
+    <pre><code>@inproceedings{lu2024mathvista,
+  author    = {Lu, Pan and Bansal, Hritik and Xia, Tony and Liu, Jiacheng and Li, Chunyuan and Hajishirzi, Hannaneh and Cheng, Hao and Chang, Kai-Wei and Galley, Michel and Gao, Jianfeng},
+  title     = {MathVista: Evaluating Mathematical Reasoning of Foundation Models in Visual Contexts},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}</code></pre>
+  </div>
+</section> -->
+
+<!-- <section>
+  <div class="section" id="org-banners" style="display:flex">
+    <a href="https://www.cuhk.edu.hk/chinese/index.html" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/cuhk.png">
+    </a>
+  <div class="section" id="org-banners" style="display:flex">
+    <a href="https://www.shlab.org.cn/" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/shlab.png">
+    </a>
+  <div class="section" id="org-banners" style="display:flex">
+    <a href="https://www.ucla.edu/" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/ucla.png">
+    </a>
+    <a href="https://www.washington.edu/" target="blank" class="ext-link">
+        <img class="center-block org-banner" src="static/images/uw.png">
+    </a>
+    <a href="https://www.microsoft.com/en-us/research/" target="_blank" rel="external">
+        <img class="center-block org-banner" src="static/images/microsoft.png">
+    </a>
+  </div>
+</section> -->
+
+
+<footer class="footer">
+  <!-- <div class="container"> -->
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is adapted from <a href="https://mathverse-cuhk.github.io/">MathVerse</a> and <a href="https://nerfies.github.io/">Nerfies</a>, licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  <!-- </div> -->
+</footer>
+
+</body>
+</html>
