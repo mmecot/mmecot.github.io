@@ -1,4 +1,4 @@
-# MMSearch
+# MME-CoT
 
 This website is adapted from [MathVerse](https://mathverse-cuhk.github.io/), [MathVista](https://mathvista.github.io/), and [Nerfies](https://nerfies.github.io) website.
 
